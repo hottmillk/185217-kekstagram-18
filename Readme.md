@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Aleksander Tkachuk](https://up.htmlacademy.ru/javascript/18/user/185217).
-* Наставник: `Неизвестно`.
+* Наставник: `Евгений Щеколдин`.
 
 ---
 
