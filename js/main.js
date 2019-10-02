@@ -1,105 +1,73 @@
 'use strict';
 
-var createMassiv = function () {
-  var PICTURES_QUANTITY = 25;
-  var MIN_PICTURE_NUMBER = 1;
-	var MAX_PICTURE_NUMBER = 25;
-	var MIN_LIKES_QUANTITY = 15;
-	var MAX_LIKES_QUANTITY = 200;
-	var MIN_COMMENTS_QUANTITY = 1;
-  var MAX_COMMENTS_QUANTITY = 2;
+var COMMENTS = [
+  'Всё отлично!',
+  'В целом всё неплохо. Но не всё.',
+  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
+  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
+];
+var NAMES = ['Иван', 'Антон', 'Саша', 'Дима', 'Петя'];
+var NUM_PHOTOS = 25;
 
-  var COMMENTS = [
-    'Всё отлично!',
-    'В целом всё неплохо. Но не всё.',
-    'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-    'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-    'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-    'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
-  ];
+var photos = [];
 
-  var DESCRIPTION = [
-    'Тестим новую камеру!',
-    'Затусили с друзьями на море',
-    'Как же круто тут кормят',
-    'Отдыхаем...',
-    'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
-    'Вот это тачка!'
-  ];
+var picturesBlock = document.querySelector('.pictures');
+var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+var fragment = document.createDocumentFragment();
 
-  window.picturesInfo = createRandomPicturesInfo(PICTURES_QUANTITY);
-
-  function createRandomPicturesInfo (picturesQuantity) {
-    var picturesInfo = [];
-    var picturesNumbersPool = createOrderedIntegerNumbers(MIN_PICTURE_NUMBER, MAX_PICTURE_NUMBER);
-
-		for (var i = 0; i < picturesQuantity; i++) {
-			var randomUniquePictureUrl = createPictureUrl(pullRandomUniqueNumber(picturesNumbersPool));
-			var randomlikesQuantity =
-				window.mathUtils.createRandomIntegerNumber(MIN_LIKES_QUANTITY, MAX_LIKES_QUANTITY);
-			var randomComments = createRandomComments(COMMENTS);
-			var randomDescription = getRandomDescription(DESCRIPTIONS);
-
-			var pictureInfo =
-				createPictureInfo(randomUniquePictureUrl, randomlikesQuantity, randomComments, randomDescription);
-			picturesInfo.push(pictureInfo);
-		}
-
-		return picturesInfo;
-	}
-
-	function createOrderedIntegerNumbers(minNumber, maxNumber) {
-		var result = [];
-		for (var i = minNumber; i <= maxNumber; i++) {
-			result.push(i);
-		}
-
-		return result;
-	}
-
-	function createPictureUrl(pictureNumber) {
-		return 'photos/' + pictureNumber + '.jpg';
-	}
-
-	function pullRandomUniqueNumber(numbersPool) {
-		var randomIndex = window.mathUtils.createRandomIntegerNumber(0, numbersPool.length - 1);
-		var randomUniqueNumber = numbersPool.splice(randomIndex, 1)[0];
-		if (randomUniqueNumber === undefined) {
-			console.log('Error! Empty numbers pool');
-		}
-
-		return randomUniqueNumber;
-	}
-
-	function createRandomComments(comments) {
-		var randomComments = [];
-		var randomQuantityOfComments =
-			window.mathUtils.createRandomIntegerNumber(MIN_COMMENTS_QUANTITY, MAX_COMMENTS_QUANTITY);
-
-		for (var i = 0; i < randomQuantityOfComments; i++) {
-			var randomComment = comments[window.mathUtils.createRandomIntegerNumber(0, comments.length - 1)];
-			randomComments.push(randomComment);
-		}
-
-		return randomComments;
-	}
-
-	function getRandomDescription(descriptions) {
-		var randomDescription = descriptions[window.mathUtils.createRandomIntegerNumber(0, descriptions.length - 1)];
-
-		return randomDescription;
-	}
-
-	function createPictureInfo(url, likesQuantity, comments, description) {
-		var pictureInfo = {
-			url: url,
-			likes: likesQuantity,
-			comments: comments,
-			description: description
-		}
-
-		return pictureInfo;
-  }
-
+var getLimitedRandom = function (bottom, top) {
+  return Math.floor(Math.random() * (top + 1 - bottom)) + bottom;
 };
 
+var getRandomEl = function (arr) {
+  var rndEl = Math.floor(Math.random() * arr.length);
+  return arr[rndEl];
+};
+
+var createComment = function () {
+  var comment = {};
+  comment.avatar = 'img/avatar-' + getLimitedRandom(1, 6) + '.svg';
+  comment.message = getRandomEl(COMMENTS);
+  comment.name = getRandomEl(NAMES);
+  return comment;
+};
+
+var createSeveralComments = function (numComments) {
+  var arr = [];
+  for (var i = 0; i < numComments; i++) {
+    arr.push(createComment());
+  }
+  return arr;
+};
+
+var createImg = function (nameImg) {
+  var imgObj = {};
+  imgObj.url = 'photos/' + nameImg + '.jpg';
+  imgObj.description = '';
+  imgObj.likes = getLimitedRandom(15, 200);
+  imgObj.comments = createSeveralComments(getLimitedRandom(1, 4));
+  return imgObj;
+};
+
+var createMorePhotos = function (arr, numPhotos) {
+  for (var i = 0; i < numPhotos; i++) {
+    arr.push(createImg(i + 1));
+  }
+};
+
+createMorePhotos(photos, NUM_PHOTOS);
+
+var renderPhoto = function (photo) {
+  var photoEl = pictureTemplate.cloneNode(true);
+  photoEl.querySelector('.picture__img').src = photo.url;
+  photoEl.querySelector('.picture__likes').textContent = photo.likes;
+  photoEl.querySelector('.picture__comments').textContent = photo.comments.length;
+  return photoEl;
+};
+
+for (var i = 0; i < photos.length; i++) {
+  fragment.appendChild(renderPhoto(photos[i]));
+}
+picturesBlock.appendChild(fragment);
