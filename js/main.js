@@ -45,7 +45,7 @@ var createSeveralComments = function (numComments) {
 var createImg = function (nameImg) {
   var imgObj = {};
   imgObj.url = 'photos/' + nameImg + '.jpg';
-  imgObj.description = '';
+  imgObj.description = 'TEST_DESCRIPTION';
   imgObj.likes = getLimitedRandom(15, 200);
   imgObj.comments = createSeveralComments(getLimitedRandom(1, 4));
   return imgObj;
@@ -71,3 +71,28 @@ for (var i = 0; i < photos.length; i++) {
   fragment.appendChild(renderPhoto(photos[i]));
 }
 picturesBlock.appendChild(fragment);
+
+// Личный проект: больше деталей
+var bigPicture = document.querySelector('.big-picture');
+
+bigPicture.classList.remove('hidden');
+
+bigPicture.querySelector('.big-picture__img > img').src = photos[0].url;
+bigPicture.querySelector('.likes-count').textContent = photos[0].likes;
+bigPicture.querySelector('.comments-count').textContent = photos[0].comments.length;
+bigPicture.querySelector('.social__caption').textContent = photos[0].description;
+
+var socialComments = bigPicture.querySelector('.social__comments');
+
+for (i = 0; i < photos[0].comments.length; i++) {
+  socialComments.querySelectorAll('.social__picture')[i].src = 'img/avatar-' + getLimitedRandom(1, 6) + '.svg';
+  socialComments.querySelectorAll('.social__text')[i].textContent = getRandomEl(COMMENTS);
+}
+
+var visuallyHidden = function (classString) {
+  document.querySelector(classString).classList.add('visually-hidden');
+  return 'hidden';
+};
+
+visuallyHidden('.social__comment-count');
+visuallyHidden('.social__comments-loader');
