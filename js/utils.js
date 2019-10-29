@@ -1,8 +1,9 @@
 'use strict';
 
 (function () {
-  if (!window.utils) {
-    window.utils = {};
-  }
-  window.utils.ESC_KEYCODE = 27;
+  var ESC_KEYCODE = 27;
+
+  window.utils = {
+    ESC_KEYCODE: ESC_KEYCODE
+  };
 })();

@@ -1,9 +1,6 @@
 'use strict';
 
 (function () {
-  if (!window.preview) {
-    window.preview = {};
-  }
 
   // Создания элемента для отображения комментария
   var createCommentEl = function (options) {
@@ -48,7 +45,7 @@
   };
 
   // Создадим обработчик для открытия большой фотографии
-  window.preview.createPhotoElementHandler = function (photo) {
+  var createPhotoElementHandler = function (photo) {
     return function () {
       showBigPicture(photo);
     };
@@ -73,4 +70,8 @@
   };
 
   document.addEventListener('keydown', documentKeydownHendler);
+
+  window.preview = {
+    createPhotoElementHandler: createPhotoElementHandler
+  };
 })();

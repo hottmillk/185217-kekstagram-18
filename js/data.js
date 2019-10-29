@@ -1,11 +1,7 @@
 'use strict';
 
 (function () {
-  if (!window.data) {
-    window.data = {};
-  }
-
-  window.data.PHOTO_QUANTITY = 25;
+  var PHOTO_QUANTITY = 25;
 
   var COMMENTS = [
     'Всё отлично!',
@@ -59,7 +55,7 @@
   };
 
   // Функция генерирует массив фото
-  window.data.genetarePhotos = function (count) {
+  var genetarePhotos = function (count) {
     var photos = [];
     var createUrl = getUrlPhoto(count);
     for (var i = 0; i < count; i++) {
@@ -72,4 +68,11 @@
     }
     return photos;
   };
+
+  window.data = {
+    PHOTO_QUANTITY: PHOTO_QUANTITY,
+    genetarePhotos: genetarePhotos
+  };
 })();
+
+
