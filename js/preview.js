@@ -2,6 +2,17 @@
 
 (function () {
 
+  var bigPictureEl = document.querySelector('.big-picture');
+  var bigPicture = bigPictureEl.querySelector('.big-picture__img img');
+  var likesCount = bigPictureEl.querySelector('.likes-count');
+  var socialCaption = bigPictureEl.querySelector('.social__caption');
+  var commentsCount = bigPictureEl.querySelector('.comments-count');
+  var socialComments = bigPictureEl.querySelector('.social__comments');
+  var socialCommentCount = bigPictureEl.querySelector('.social__comment-count');
+  var commentsLoader = bigPictureEl.querySelector('.comments-loader');
+  var pictureCancel = bigPictureEl.querySelector('#picture-cancel');
+
+
   // Создания элемента для отображения комментария
   var createCommentEl = function (options) {
     var item = document.createElement('li');
@@ -32,16 +43,16 @@
 
   // Покажем большую фотку
   var showBigPicture = function (photo) {
-    var bigPicture = document.querySelector('.big-picture');
-    bigPicture.querySelector('.big-picture__img img').src = photo.url;
-    bigPicture.querySelector('.likes-count').textContent = photo.likes;
-    bigPicture.querySelector('.social__caption').textContent = photo.description;
-    bigPicture.querySelector('.comments-count').textContent = photo.comments.length;
-    fillComments(bigPicture.querySelector('.social__comments'), photo.comments);
-    bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
-    bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
-    bigPicture.classList.remove('hidden');
-    bigPicture.querySelector('#picture-cancel').addEventListener('click', pictureCloseClickHandler);
+    bigPicture.src = photo.url;
+    likesCount.textContent = photo.likes;
+    socialCaption.textContent = photo.description;
+    commentsCount.textContent = photo.comments.length;
+    fillComments(socialComments, photo.comments);
+    socialCommentCount.classList.add('visually-hidden');
+    commentsLoader.classList.add('visually-hidden');
+    bigPictureEl.classList.remove('hidden');
+    pictureCancel.addEventListener('click', pictureCloseClickHandler);
+    document.body.classList.add('modal-open');
   };
 
   // Создадим обработчик для открытия большой фотографии
@@ -53,8 +64,9 @@
 
   // Функция закрывает болшую фотографию
   var closeBigPicture = function () {
-    document.querySelector('.big-picture').classList.add('hidden');
-    document.querySelector('#picture-cancel').removeEventListener('click', pictureCloseClickHandler);
+    bigPictureEl.classList.add('hidden');
+    pictureCancel.removeEventListener('click', pictureCloseClickHandler);
+    document.body.classList.remove('modal-open');
   };
 
   // обработчик для закрытия окна с большой фотографией
