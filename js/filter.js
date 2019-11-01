@@ -7,12 +7,23 @@
   var MIN_VALUE_BLUR = 0;
   var MAX_VALUE_BLUR = 3;
 
-  var EFFECT_HEAT = 'heat';
-  var EFFECT_CHROME = 'chrome';
-  var EFFECT_SEPIA = 'sepia';
-  var EFFECT_MARVIN = 'marvin';
-  var EFFECT_PHOBOS = 'phobos';
-  var ORIGINAL_PIC = 'none';
+  var Effect = {
+    HEAT: 'heat',
+    CHROME: 'chrome',
+    SEPIA: 'sepia',
+    MARVIN: 'marvin',
+    PHOBOS: 'phobos',
+    ORIGINAL: 'none'
+  };
+
+  var effectClass = {
+    'heat': 'effects__preview--heat',
+    'chrome': 'effects__preview--chrome',
+    'sepia': 'effects__preview--sepia',
+    'marvin': 'effects__preview--marvin',
+    'phobos': 'effects__preview--phobos',
+    'none': ''
+  };
 
   var effectElement;
   var radioElements;
@@ -27,73 +38,56 @@
 
   // Установка "ХРОМ"
   var setChrome = function (ratio) {
-    previewElement.classList.add('effects__preview--chrome');
+    previewElement.classList.add(effectClass[Effect.CHROME]);
     setEffectValue(ratio);
     previewElement.style.filter = 'grayscale(' + ratio + ')';
-    currentEffect = EFFECT_CHROME;
+    currentEffect = Effect.CHROME;
   };
 
   // Установка "СЕПИЯ"
   var setSepia = function (ratio) {
-    previewElement.classList.add('effects__preview--sepia');
+    previewElement.classList.add(effectClass[Effect.SEPIA]);
     setEffectValue(ratio);
     previewElement.style.filter = 'sepia(' + ratio + ')';
-    currentEffect = EFFECT_SEPIA;
+    currentEffect = Effect.SEPIA;
   };
 
   // Установка "ФОБОС"
   var setPhobos = function (ratio) {
-    previewElement.classList.add('effects__preview--phobos');
+    previewElement.classList.add(effectClass[Effect.PHOBOS]);
     var value = (MIN_VALUE_BLUR + ratio * (MAX_VALUE_BLUR - MIN_VALUE_BLUR)).toFixed(2);
     setEffectValue(value);
     previewElement.style.filter = 'blur(' + value + 'px)';
-    currentEffect = EFFECT_PHOBOS;
+    currentEffect = Effect.PHOBOS;
   };
 
   // Установка "МАРВИН"
   var setMarvin = function (ratio) {
-    previewElement.classList.add('effects__preview--marvin');
+    previewElement.classList.add(effectClass[Effect.MARVIN]);
     setEffectValue(ratio);
     previewElement.style.filter = 'invert(' + ratio + ')';
-    currentEffect = EFFECT_MARVIN;
+    currentEffect = Effect.MARVIN;
   };
 
   // Установка "ЗНОЙ"
   var setBrightness = function (ratio) {
-    previewElement.classList.add('effects__preview--heat');
+    previewElement.classList.add(effectClass[Effect.HEAT]);
     var value = (MIN_BRIGHTNESS + ratio * (MAX_BRIGHTNESS - MIN_BRIGHTNESS)).toFixed(2);
     setEffectValue(value);
     previewElement.style.filter = 'brightness(' + value + ')';
-    currentEffect = EFFECT_HEAT;
+    currentEffect = Effect.HEAT;
   };
 
   // Cброс фильтра
   var resetFilter = function () {
     setEffectValue('');
     previewElement.style.filter = '';
-    currentEffect = ORIGINAL_PIC;
+    currentEffect = Effect.ORIGINAL;
   };
 
-  // удаление класса
   var clearClass = function () {
-    switch (currentEffect) {
-      case EFFECT_CHROME:
-        previewElement.classList.remove('effects__preview--chrome');
-        break;
-      case EFFECT_SEPIA:
-        previewElement.classList.remove('effects__preview--sepia');
-        break;
-      case EFFECT_PHOBOS:
-        previewElement.classList.remove('effects__preview--phobos');
-        break;
-      case EFFECT_MARVIN:
-        previewElement.classList.remove('effects__preview--marvin');
-        break;
-      case EFFECT_HEAT:
-        previewElement.classList.remove('effects__preview--heat');
-        break;
-      default:
-        break;
+    if (currentEffect !== Effect.ORIGINAL) {
+      previewElement.classList.remove(effectClass[currentEffect]);
     }
   };
 
@@ -103,7 +97,7 @@
     if (!target.checked) {
       return;
     }
-    var visibilitySlider = target.value !== ORIGINAL_PIC;
+    var visibilitySlider = target.value !== Effect.ORIGINAL;
     window.slider.setVisibilitySlider(visibilitySlider);
   };
 
@@ -122,23 +116,23 @@
     var filterName = radioElements[indexCheck].value;
     clearClass();
     switch (filterName) {
-      case EFFECT_CHROME: {
+      case Effect.CHROME: {
         setChrome(ratio);
         return;
       }
-      case EFFECT_PHOBOS: {
+      case Effect.PHOBOS: {
         setPhobos(ratio);
         return;
       }
-      case EFFECT_MARVIN: {
+      case Effect.MARVIN: {
         setMarvin(ratio);
         return;
       }
-      case EFFECT_HEAT: {
+      case Effect.HEAT: {
         setBrightness(ratio);
         return;
       }
-      case EFFECT_SEPIA: {
+      case Effect.SEPIA: {
         setSepia(ratio);
         return;
       }
