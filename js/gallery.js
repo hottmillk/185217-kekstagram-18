@@ -99,7 +99,7 @@
       copy.slice(indexRandom, 1);
     }
     return total;
-
+  };
   window.interaction.load(loadPhoto, window.windowError.errorWindow);
 })();
 
