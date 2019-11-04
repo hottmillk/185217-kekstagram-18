@@ -2,31 +2,33 @@
 
 (function () {
 
-  var STATUS_OK = 200;
-  var STATUS_BAD = 400;
-  var STATUS_UNAUTHORIZED = 401;
-  var STATUS_NOT_FOUND = 404;
-  var TIME = 5000;
+  var postCode = {
+    REQUEST_OK: 200,
+    REQUSET_BAD: 400,
+    UNAUTHORIZED: 401,
+    NOT_FOUND: 400
+  };
+  var TIMEOUT = 5000;
 
 
   var sendReq = function (options) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.timeout = TIME;
+    xhr.timeout = TIMEOUT;
 
     xhr.addEventListener('load', function () {
       var error;
       switch (xhr.status) {
-        case STATUS_OK:
+        case postCode.REQUEST_OK:
           options.onSuccess(xhr.response);
           break;
-        case STATUS_BAD:
+        case postCode.REQUSET_BAD:
           error = 'Запрос неверный';
           break;
-        case STATUS_UNAUTHORIZED:
+        case postCode.UNAUTHORIZED:
           error = 'Пользователь не авторизован';
           break;
-        case STATUS_NOT_FOUND:
+        case postCode.NOT_FOUND:
           error = 'Не найдено';
           break;
         default:
