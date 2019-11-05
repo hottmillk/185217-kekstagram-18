@@ -2,7 +2,7 @@
 
 (function () {
 
-  var INIT_SPOT = true;
+  var STEP_SLIDER = 3;
 
   var actionCallback;
   var effectLevel = document.querySelector('.effect-level');
@@ -19,10 +19,10 @@
 
   // значение для перемещения pin
   var getPinMove = function () {
-    var rect = {};
-    rect.minX = 0;
-    rect.maxX = effectLine.offsetWidth;
-    return rect;
+    return {
+      minX: 0,
+      maxX: effectLine.offsetWidth
+    };
   };
 
   // Видимость слайдера
@@ -32,15 +32,15 @@
     } else {
       effectLevel.classList.add('hidden');
     }
-    movePin(INIT_SPOT);
+    movePin();
   };
 
-  var init = function (callback) {
+  var initSlider = function (callback) {
     actionCallback = callback;
   };
 
-  var clear = function () {
-    movePin(INIT_SPOT);
+  var clearSlider = function () {
+    movePin();
   };
 
   // onMouse для слайдера
@@ -68,11 +68,22 @@
     document.addEventListener('mouseup', mouseUpHandler);
   };
 
+  var effectPinKeydownHandler = function (downEvt) {
+    if (window.keyCodes.pressLeftArrow(downEvt)) {
+      movePin(STEP_SLIDER);
+      return;
+    }
+    if (window.keyCodes.pressRightArrow(downEvt)) {
+      movePin(-STEP_SLIDER);
+      return;
+    }
+  };
+
   // установка позиции pin
   var movePin = function (shiftX) {
     var movePinRect = getPinMove();
-    var positionX = effectPin.offsetLeft - shiftX;
-    if (typeof (shiftX) !== 'boolean') {
+    if (arguments.length > 0) {
+      var positionX = effectPin.offsetLeft - shiftX;
       if (positionX >= movePinRect.minX && positionX <= movePinRect.maxX) {
         effectPin.style.left = (effectPin.offsetLeft - shiftX) + 'px';
         effectDepth.style.width = effectPin.offsetLeft + 'px';
@@ -87,10 +98,11 @@
   };
 
   effectPin.addEventListener('mousedown', effectPinMouseHandler);
+  effectPin.addEventListener('keydown', effectPinKeydownHandler);
 
   window.slider = {
     setVisibilitySlider: setVisibilitySlider,
-    init: init,
-    clear: clear
+    initSlider: initSlider,
+    clearSlider: clearSlider
   };
 })();

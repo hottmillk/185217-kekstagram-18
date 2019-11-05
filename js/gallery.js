@@ -17,9 +17,8 @@
   var objectPhoto;
   var idTimeout;
 
-  var filterActive = Array.prototype.find.call(imgFiltersButton, function (item) {
-    return item.classList.contains('img-filters__button');
-  });
+  var filterActive = imgFilters.querySelector('.img-filters__button--active');
+
   var backup = document.querySelectorAll('.pictures > *');
 
   var loadPhoto = function (photos) {
@@ -90,16 +89,20 @@
   };
 
   var getRandomPic = function (photos, count) {
-    var copy = photos.slice();
-    var total = [];
-    var indexRandom = -1;
-    for (var i = 0; i < count; i++) {
-      indexRandom = Math.round(Math.random() * (copy.length - 1));
-      total.push(copy[indexRandom]);
-      copy.slice(indexRandom, 1);
+    var result = photos.slice();
+    for (var i = result.length - 1; i > 0; i--) {
+      var indexRandom = Math.round(Math.random() * i);
+      swapItems(result, i, indexRandom);
     }
-    return total;
+    return result.slice(0, result.length < count ? result.length : count);
   };
-  window.interaction.load(loadPhoto, window.windowError.errorWindow);
+
+  var swapItems = function (source, indexOne, indexTwo) {
+    var itemTemp = source[indexOne];
+    source[indexOne] = source[indexTwo];
+    source[indexTwo] = itemTemp;
+  };
+
+  window.interaction.load(loadPhoto, window.modal.errorWindow);
 })();
 

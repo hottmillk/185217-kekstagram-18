@@ -12,13 +12,12 @@
   };
 
   // Функция создает и заполняет DocumentFragment
-  var createDocumentFragment = function (template, photos) {
-    var documentFragment = document.createDocumentFragment();
+  var createDocumentFragment = function (template, photos, fragment) {
     photos.forEach(function (value) {
       var clone = template.cloneNode(true);
-      documentFragment.appendChild(fillPhotoEl(clone, value));
+      fragment.appendChild(fillPhotoEl(clone, value));
     });
-    return documentFragment;
+    return fragment;
   };
 
   window.picture = {

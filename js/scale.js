@@ -34,32 +34,36 @@
 
   // функия обработчик для увелечиния
   var scaleBigHandler = function () {
-    var value = getScaleValue();
-    setScale(value + STEP_SCALE);
+    setScale(getScaleValue() + STEP_SCALE);
   };
 
   // функия обработчик для уменьшения
   var scaleSmallHandler = function () {
-    var value = getScaleValue();
-    setScale(value - STEP_SCALE);
+    setScale(getScaleValue() - STEP_SCALE);
   };
 
-  var init = function (element, preview) {
+  // дефолт value
+  var scaleDefault = function (value) {
+    scaleInput.defaultValue = value + '%';
+  };
+
+  var initScale = function (element, preview) {
     scaleEl = element;
     previewEl = preview;
     scaleInput = scaleEl.querySelector('.scale__control--value');
     scaleEl.querySelector('.scale__control--bigger').addEventListener('click', scaleBigHandler);
     scaleEl.querySelector('.scale__control--smaller').addEventListener('click', scaleSmallHandler);
+    scaleDefault(MAX_VALUE_SCALE);
     setScale(MAX_VALUE_SCALE);
   };
 
-  var clear = function () {
+  var clearScale = function () {
     setScale(MAX_VALUE_SCALE);
   };
 
 
   window.scale = {
-    init: init,
-    clear: clear
+    initScale: initScale,
+    clearScale: clearScale
   };
 })();

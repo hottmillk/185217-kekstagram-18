@@ -10,14 +10,15 @@
   var previewElement = document.querySelector('.img-upload__preview');
   var scaleElement = document.querySelector('.scale');
   var uploadOverlay = document.querySelector('.img-upload__overlay');
-  var uploadFile = document.querySelector('#upload-file');
   var form = document.querySelector('.img-upload__form');
   var uploadSubmit = form.querySelector('.img-upload__submit');
   var uploadCancel = document.querySelector('#upload-cancel');
+  var EMPTY_STRING = '';
 
   // сброс эффектов
   var clearEffects = function () {
-    window.scale.clear();
+    window.scale.clearScale();
+    window.filter.clearFilter();
     window.slider.setVisibilitySlider(false);
     textHashtags.value = '';
     textDescription.value = '';
@@ -26,16 +27,18 @@
   // Открывание окна редактирования
   var showUploadWindow = function () {
     uploadOverlay.classList.remove('hidden');
-    uploadCancel.addEventListener('click', hiddenUploadWindow);
+    uploadCancel.addEventListener('click', uploadCancelClickHandler);
     clearEffects();
+    setSubmitActive(true);
     originRadio.focus();
   };
 
   // закрывает окно редактирования
   var hiddenUploadWindow = function () {
+    clearEffects();
     uploadOverlay.classList.add('hidden');
-    uploadCancel.removeEventListener('click', hiddenUploadWindow);
-    uploadFile.value = '';
+    uploadCancel.removeEventListener('click', uploadCancelClickHandler);
+    chooseFile.clear();
   };
 
   // onChange для поля загрузки
@@ -43,9 +46,13 @@
     showUploadWindow();
   };
 
+  var uploadCancelClickHandler = function () {
+    hiddenUploadWindow();
+  };
+
   // onKeydown для документа
   var documentKeydownHendler = function (evt) {
-    if (evt.keyCode === window.utils.ESC_KEYCODE && checkClosing()) {
+    if (window.keyCodes.pressEsc(evt) && checkClosing()) {
       hiddenUploadWindow();
     }
   };
@@ -57,12 +64,28 @@
 
   // Валидация
   var hashtagsValidation = function (element) {
+    var hashtags = checkHashtagsAvailability(element);
+    if (!hashtags) {
+      return false;
+    }
+    if (lengthHashtags(hashtags, element)) {
+      return false;
+    }
+    if (countHashtags(hashtags, element)) {
+      return false;
+    }
+    if (repeatingHashtags(hashtags, element)) {
+      return false;
+    }
+    return true;
+  };
+
+  var checkHashtagsAvailability = function (element) {
     var value = element.value;
-    var hashtags = value.replace(/\s{2,}/, ' ').trim().split(' ');
+    var hashtags = value.replace(/\s{2,}/gi, ' ').trim().split(' ');
     var errors = [];
-    var haveError = false;
     element.setCustomValidity('');
-    if (hashtags[0]) {
+    if (hashtags[0] !== EMPTY_STRING) {
       hashtags.forEach(function (hash) {
         var req = /(^#+)([\wА-Яа-я-=+*&^%$@!~`/#|(){}№;:?\.,<>_"'\\]+$)/;
         if (!req.test(hash)) {
@@ -71,21 +94,14 @@
       });
     }
     if (errors.length > 0) {
-      element.setCustomValidity('Недопустимые значения: ' + errors.join(', '));
-      haveError = true;
-    } else {
-      haveError = lengthHashtags(hashtags, element, haveError);
-      haveError = countHashtags(hashtags, element, haveError);
-      haveError = repeatingHashtags(hashtags, element, haveError);
+      element.setCustomValidity('В строке есть навилидные значения: ' + errors.join(', '));
+      return null;
     }
-    return haveError;
+    return hashtags;
   };
 
   // валидация (длина тега)
-  var lengthHashtags = function (hashtags, elem, error) {
-    if (error) {
-      return error;
-    }
+  var lengthHashtags = function (hashtags, elem) {
     var errors = [];
     hashtags.forEach(function (tag) {
       if (tag.length > 20) {
@@ -100,10 +116,7 @@
   };
 
   // валидация (число тегов)
-  var countHashtags = function (hashtags, elem, error) {
-    if (error) {
-      return error;
-    }
+  var countHashtags = function (hashtags, elem) {
     if (hashtags.length > 5) {
       elem.setCustomValidity('Содержится более 5 хэш-тегов');
       return true;
@@ -112,10 +125,7 @@
   };
 
   // валидация (повтор тега)
-  var repeatingHashtags = function (hashtags, elem, error) {
-    if (error) {
-      return error;
-    }
+  var repeatingHashtags = function (hashtags, elem) {
     var errors = [];
     var caseTags = hashtags.map(function (value) {
       return value.toLowerCase();
@@ -135,31 +145,56 @@
     return false;
   };
 
+  var lightupError = function (element) {
+    element.style.outline = '3px solid red';
+  };
+
+  var cancelLightupError = function (element) {
+    element.style.outline = '';
+  };
+
   var formatDescriprion = function () {
     textDescription.value = textDescription.value.replace(/\n/g, ' ');
   };
 
   // валидация (событие submit)
   var uploadSubmitClickHandler = function (evt) {
+    cancelLightupError(textHashtags);
     formatDescriprion();
-    var invalid = hashtagsValidation(textHashtags);
-    if (!invalid && form.checkValidity()) {
+    if (hashtagsValidation(textHashtags)) {
+      lightupError(textHashtags);
+      return;
+    }
+    if (form.checkValidity()) {
       evt.preventDefault();
-      window.interaction.upload(form, successHendler, window.windowError.errorWindow);
+      setSubmitActive(false);
+      window.interaction.upload(form, successHendler, errorHandler);
     }
   };
 
   var successHendler = function () {
-    window.windowSuccess.windowSuccess(hiddenUploadWindow);
+    window.modal.windowSuccess(hiddenUploadWindow);
   };
+
+  var errorHandler = function () {
+    window.modal.errorWindow();
+    setSubmitActive(true);
+  };
+
+  var setSubmitActive = function (active) {
+    uploadSubmit.disabled = !active;
+  };
+
+
+  var chooseFile = new window.FileChooser(uploadChangeHandler);
 
   window.utils.trackFocus(textDescription);
   window.utils.trackFocus(textHashtags);
-  window.scale.init(scaleElement, previewElement);
-  window.filter.init(effectLevel, radioInputs, previewElement);
-  window.slider.init(window.filter.setFilter);
-  uploadFile.addEventListener('change', uploadChangeHandler);
+  window.scale.initScale(scaleElement, previewElement);
+  window.filter.initFilter(effectLevel, radioInputs, previewElement);
+  window.slider.initSlider(window.filter.setEffect);
+
   document.addEventListener('keydown', documentKeydownHendler);
   uploadSubmit.addEventListener('click', uploadSubmitClickHandler);
-  // добаление обработчиков событий
+
 })();
