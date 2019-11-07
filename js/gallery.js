@@ -3,7 +3,6 @@
 (function () {
 
   var RANDOM_QUANTITY = 10;
-  var TIMEOUT = 500;
   var idFilter = {
     RANDOM: 'filter-random',
     DISCUSSED: 'filter-discussed',
@@ -15,7 +14,6 @@
   var imgFilters = document.querySelector('.img-filters');
   var imgFiltersButton = imgFilters.querySelectorAll('.img-filters__button');
   var objectPhoto;
-  var idTimeout;
 
   var filterActive = imgFilters.querySelector('.img-filters__button--active');
 
@@ -24,15 +22,12 @@
   var loadPhoto = function (photos) {
     objectPhoto = photos;
     imgFiltersButton.forEach(function (item) {
-      item.addEventListener('click', function (evt) {
+      item.addEventListener('click', window.debounce(function (evt) {
         filterInactive();
         filterActive = evt.target;
         filterActive.classList.add('img-filters__button--active');
-        if (idTimeout) {
-          clearTimeout(idTimeout);
-        }
-        idTimeout = setTimeout(setFilter, TIMEOUT);
-      });
+        setFilter();
+      }));
     });
     imgFilters.classList.remove('img-filters--inactive');
     setFilter();
