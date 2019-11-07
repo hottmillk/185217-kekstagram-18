@@ -121,8 +121,8 @@
     switchFilter(filterName, ratio);
   };
 
-  var switchFilter = function (filterName, ratio) {
-    switch (filterName) {
+  var switchFilter = function (filter, ratio) {
+    switch (filter) {
       case Effect.CHROME: {
         setChrome(ratio);
         return;

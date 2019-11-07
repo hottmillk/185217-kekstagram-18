@@ -5,7 +5,7 @@
   var MIN_VALUE_SCALE = 25;
   var STEP_SCALE = 25;
   var scaleEl;
-  var previewEl;
+  var previewElement;
   var scaleInput;
 
   // функия возвращает установленое значени масштаба для передачи
@@ -29,7 +29,7 @@
       return;
     }
     setScaleValue(value);
-    previewEl.style.transform = 'scale(' + getScaleValue() / 100 + ')';
+    previewElement.style.transform = 'scale(' + getScaleValue() / 100 + ')';
   };
 
   // функия обработчик для увелечиния
@@ -49,7 +49,7 @@
 
   var initScale = function (element, preview) {
     scaleEl = element;
-    previewEl = preview;
+    previewElement = preview;
     scaleInput = scaleEl.querySelector('.scale__control--value');
     scaleEl.querySelector('.scale__control--bigger').addEventListener('click', scaleBigHandler);
     scaleEl.querySelector('.scale__control--smaller').addEventListener('click', scaleSmallHandler);

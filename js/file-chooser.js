@@ -6,7 +6,6 @@
   var fileInput = document.querySelector('#upload-file');
   var previewElement = document.querySelector('.img-upload__preview');
   var previewImage = previewElement.querySelector('img');
-
   var fileUploadChangeHandler;
 
   var FileChooser = function (callback) {
