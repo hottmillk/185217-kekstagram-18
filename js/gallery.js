@@ -3,6 +3,7 @@
 (function () {
 
   var RANDOM_QUANTITY = 10;
+
   var idFilter = {
     RANDOM: 'filter-random',
     DISCUSSED: 'filter-discussed',
@@ -44,13 +45,13 @@
     var backupFrag = restoreBackup();
     switch (filterActive.id) {
       case idFilter.POPULAR:
-        popularPhotos(backupFrag);
+        showPopularPhotos(backupFrag);
         break;
       case idFilter.RANDOM:
-        randomPhotos(backupFrag);
+        showRandomPhotos(backupFrag);
         break;
       case idFilter.DISCUSSED:
-        discussedPhotos(backupFrag);
+        showDiscussedPhotos(backupFrag);
         break;
     }
   };
@@ -67,16 +68,16 @@
     return fragment;
   };
 
-  var popularPhotos = function (fragment) {
+  var showPopularPhotos = function (fragment) {
     pictures.appendChild(window.picture.createDocumentFragment(photoTemplate, objectPhoto, fragment));
   };
 
-  var randomPhotos = function (fragment) {
+  var showRandomPhotos = function (fragment) {
     var selection = getRandomPic(objectPhoto, RANDOM_QUANTITY);
     pictures.appendChild(window.picture.createDocumentFragment(photoTemplate, selection, fragment));
   };
 
-  var discussedPhotos = function (fragment) {
+  var showDiscussedPhotos = function (fragment) {
     var photoSort = objectPhoto.slice().sort(function (a, b) {
       return b.comments.length - a.comments.length;
     });

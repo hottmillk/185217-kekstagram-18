@@ -9,7 +9,7 @@
   var actionCallback;
 
 
-  var windowSuccess = function (callback) {
+  var showWindowSuccess = function (callback) {
     createElement(successTemplate);
     actionCallback = callback;
     var buttons = initButtons('.success__button');
@@ -17,7 +17,7 @@
     initWindow(buttons[0]);
   };
 
-  var windowError = function (message) {
+  var showWindowError = function (message) {
     createElement(errorTemplate);
     element.querySelector('.error__title').textContent = message;
     var buttons = initButtons('.error__button');
@@ -77,7 +77,7 @@
 
 
   window.modal = {
-    windowError: windowError,
-    windowSuccess: windowSuccess
+    windowError: showWindowError,
+    windowSuccess: showWindowSuccess
   };
 })();

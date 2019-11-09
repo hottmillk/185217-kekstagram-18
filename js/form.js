@@ -2,6 +2,11 @@
 
 (function () {
 
+  var HASHTAG_MAX_LENGTH = 20; // максимальная длина тега
+  var HASHTAG_MIN_LENGTH = 0; // минимальная длина тега
+  var HASHTAG_MAX_QUANTITY = 5; // максимальное количество тегов
+  var EMPTY_STRING = '';
+
   var effectLevel = document.querySelector('.effect-level');
   var originRadio = document.querySelector('input[type=radio][checked]');
   var radioInputs = document.querySelectorAll('.effects__radio');
@@ -13,7 +18,7 @@
   var form = document.querySelector('.img-upload__form');
   var uploadSubmit = form.querySelector('.img-upload__submit');
   var uploadCancel = document.querySelector('#upload-cancel');
-  var EMPTY_STRING = '';
+
 
   // сброс эффектов
   var clearEffects = function () {
@@ -65,16 +70,7 @@
   // Валидация
   var hashtagsValidation = function (element) {
     var hashtags = checkHashtagsAvailability(element);
-    if (!hashtags) {
-      return false;
-    }
-    if (lengthHashtags(hashtags, element)) {
-      return false;
-    }
-    if (countHashtags(hashtags, element)) {
-      return false;
-    }
-    if (repeatingHashtags(hashtags, element)) {
+    if (!hashtags || lengthHashtags(hashtags, element) || countHashtags(hashtags, element) || repeatingHashtags(hashtags, element) || space(hashtags, element)) {
       return false;
     }
     return true;
@@ -104,20 +100,31 @@
   var lengthHashtags = function (hashtags, elem) {
     var errors = [];
     hashtags.forEach(function (tag) {
-      if (tag.length > 20) {
+      if (tag.length > HASHTAG_MAX_LENGTH) {
         errors.push(tag);
       }
     });
-    if (errors.length > 0) {
+    if (errors.length > HASHTAG_MIN_LENGTH) {
       elem.setCustomValidity('Эти хэш-теги превышают 20 символов: ' + errors.join(', '));
       return true;
     }
     return false;
   };
 
+  // Валидаия (разделение пробелом)
+  var space = function (hashtags, elem) {
+    var errors = [];
+    hashtags.forEach(function (tag) {
+      if (tag.slice(1).includes('#')) {
+        elem.setCustomValidity('Хэш-теги должны разделятся пробелами ' + errors.join(', '));
+      }
+    });
+    return false;
+  };
+
   // валидация (число тегов)
   var countHashtags = function (hashtags, elem) {
-    if (hashtags.length > 5) {
+    if (hashtags.length > HASHTAG_MAX_QUANTITY) {
       elem.setCustomValidity('Содержится более 5 хэш-тегов');
       return true;
     }

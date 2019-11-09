@@ -1,9 +1,11 @@
 'use strict';
 
 (function () {
+
   var MAX_VALUE_SCALE = 100;
   var MIN_VALUE_SCALE = 25;
   var STEP_SCALE = 25;
+
   var scaleEl;
   var previewElement;
   var scaleInput;
