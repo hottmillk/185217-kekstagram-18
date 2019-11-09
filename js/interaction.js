@@ -9,9 +9,10 @@
     NOT_FOUND: 400
   };
   var TIMEOUT = 5000;
+  var URL_DATA = ' https://js.dump.academy/kekstagram/data';
 
 
-  var sendReq = function (options) {
+  var sendReq = function (request) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.timeout = TIMEOUT;
@@ -20,7 +21,7 @@
       var error;
       switch (xhr.status) {
         case postCode.REQUEST_OK:
-          options.onSuccess(xhr.response);
+          request.onSuccess(xhr.response);
           break;
         case postCode.REQUSET_BAD:
           error = 'Запрос неверный';
@@ -36,45 +37,45 @@
       }
 
       if (error) {
-        options.onError(error);
+        request.onError(error);
       }
     });
 
     xhr.addEventListener('error', function () {
-      options.onError('Ошибка соединения');
+      request.onError('Ошибка соединения');
     });
 
     xhr.addEventListener('timeout', function () {
-      options.onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      request.onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.open(options.method, options.url);
-    if (options.data) {
-      xhr.send(options.data);
+    xhr.open(request.method, request.url);
+    if (request.data) {
+      xhr.send(request.data);
     } else {
       xhr.send();
     }
   };
 
   var load = function (onSuccess, onError) {
-    var options = {
+    var loadingReq = {
       method: 'GET',
-      url: window.utils.URL_DATA,
+      url: URL_DATA,
       onSuccess: onSuccess,
       onError: onError
     };
-    sendReq(options);
+    sendReq(loadingReq);
   };
 
   var upload = function (form, onSuccess, onError) {
-    var options = {
+    var uploadingReq = {
       method: form.method,
       url: form.action,
       data: new FormData(form),
       onSuccess: onSuccess,
       onError: onError
     };
-    sendReq(options);
+    sendReq(uploadingReq);
   };
 
   window.interaction = {

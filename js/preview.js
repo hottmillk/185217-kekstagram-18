@@ -1,19 +1,19 @@
 'use strict';
 
 (function () {
+  var COMMENT_STEP = 5;
 
   var bigPictureEl = document.querySelector('.big-picture');
-  var bigPicture = bigPictureEl.querySelector('.big-picture__img img');
-  var likesCount = bigPictureEl.querySelector('.likes-count');
-  var socialCaption = bigPictureEl.querySelector('.social__caption');
-  var commentsCount = bigPictureEl.querySelector('.comments-count');
-  var socialComments = bigPictureEl.querySelector('.social__comments');
-  var socialCommentCount = bigPictureEl.querySelector('.social__comment-count');
-  var commentsLoader = bigPictureEl.querySelector('.comments-loader');
-  var pictureCancel = bigPictureEl.querySelector('#picture-cancel');
-  var loaderComment = bigPictureEl.querySelector('.comments-loader');
-
-  var COMMENT_STEP = 5;
+  var bigPictureElement = bigPictureEl.querySelector('.big-picture__img img');
+  var likesCountEl = bigPictureEl.querySelector('.likes-count');
+  var socialCaptionEl = bigPictureEl.querySelector('.social__caption');
+  var commentsCountEl = bigPictureEl.querySelector('.comments-count');
+  var socialCommentsEl = bigPictureEl.querySelector('.social__comments');
+  var socialCommentCountEl = bigPictureEl.querySelector('.social__comment-count');
+  var commentsLoaderEl = bigPictureEl.querySelector('.comments-loader');
+  var pictureCancelEl = bigPictureEl.querySelector('#picture-cancel');
+  var loaderCommentEl = bigPictureEl.querySelector('.comments-loader');
+  var socialFooterTextEl = bigPictureEl.querySelector('.social__footer-text');
   var iterationOfComment;
 
 
@@ -41,15 +41,18 @@
   // видимость загрузчика коментов
   var setVisibilityCommentLoader = function (isVisible) {
     if (isVisible) {
-      loaderComment.classList.remove('visually-hidden');
+      loaderCommentEl.classList.remove('visually-hidden');
     } else {
-      loaderComment.classList.add('visually-hidden');
+      loaderCommentEl.classList.add('visually-hidden');
     }
+  };
+
+  var clearCommentsContiner = function (container) {
+    container.innerHTML = '';
   };
 
   // Наполнение контейнера комментов
   var fillComments = function (container, comments) {
-    container.innerHTML = '';
     container.appendChild(createCommentEls(comments));
   };
 
@@ -67,28 +70,29 @@
       setVisibilityCommentLoader(!isEnd);
       return total;
     };
-    return function () {
-      return getMoreComment(comments);
-    };
+    return getMoreComment;
+
   };
 
   // Покажем большую фотку
   var showBigPicture = function (photo) {
-    bigPicture.src = photo.url;
-    likesCount.textContent = photo.likes;
-    socialCaption.textContent = photo.description;
-    commentsCount.textContent = photo.comments.length;
+    bigPictureElement.src = photo.url;
+    likesCountEl.textContent = photo.likes;
+    socialCaptionEl.textContent = photo.description;
+    commentsCountEl.textContent = photo.comments.length;
     iterationOfComment = createCommentIterator(photo.comments);
-    fillComments(socialComments, iterationOfComment());
-    socialCommentCount.classList.add('visually-hidden');
+    clearCommentsContiner(socialCommentsEl);
+    fillComments(socialCommentsEl, iterationOfComment());
+    socialCommentCountEl.classList.add('visually-hidden');
     bigPictureEl.classList.remove('hidden');
-    pictureCancel.addEventListener('click', pictureCloseClickHandler);
-    loaderComment.addEventListener('click', commentsLoaderClickHandler);
+    pictureCancelEl.addEventListener('click', pictureCloseClickHandler);
+    loaderCommentEl.addEventListener('click', commentsLoaderClickHandler);
+    socialFooterTextEl.focus();
     document.body.classList.add('modal-open');
   };
 
   var commentsLoaderClickHandler = function () {
-    fillComments(socialComments, iterationOfComment());
+    fillComments(socialCommentsEl, iterationOfComment());
   };
 
   // Создадим обработчик для открытия большой фотографии
@@ -100,11 +104,17 @@
 
   // Функция закрывает болшую фотографию
   var closeBigPicture = function () {
+    clearSocialFooterText();
     bigPictureEl.classList.add('hidden');
-    pictureCancel.removeEventListener('click', pictureCloseClickHandler);
-    commentsLoader.removeEventListener('click', commentsLoaderClickHandler);
+    pictureCancelEl.removeEventListener('click', pictureCloseClickHandler);
+    commentsLoaderEl.removeEventListener('click', commentsLoaderClickHandler);
     document.body.classList.remove('modal-open');
   };
+
+  var clearSocialFooterText = function () {
+    socialFooterTextEl.value = '';
+  };
+
 
   // обработчик для закрытия окна с большой фотографией
   var pictureCloseClickHandler = function () {
@@ -113,7 +123,7 @@
 
   // onKeydown для документа
   var documentKeydownHendler = function (evt) {
-    if (evt.keyCode === window.utils.ESC_KEYCODE) {
+    if (window.keyCodes.pressEsc(evt)) {
       closeBigPicture();
     }
   };

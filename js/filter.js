@@ -28,6 +28,7 @@
   var effectElement;
   var radioElements;
   var previewElement;
+  var originalRadio;
   var currentEffect;
 
 
@@ -97,25 +98,31 @@
     if (!target.checked) {
       return;
     }
-    var visibilitySlider = target.value !== Effect.ORIGINAL;
-    window.slider.setVisibilitySlider(visibilitySlider);
+    window.slider.setVisibilitySlider(target.value !== Effect.ORIGINAL);
   };
 
   // onChange для КАЖДОГО radio
   var initialAllRadio = function () {
-    radioElements.forEach(function (value) {
-      value.addEventListener('change', effectChangeHandler);
+    radioElements.forEach(function (item) {
+      item.addEventListener('change', effectChangeHandler);
+      if (item.value === Effect.ORIGINAL) {
+        originalRadio = item;
+      }
     });
   };
 
   // Установка фильтра
   var setFilter = function (ratio) {
-    var indexCheck = Array.prototype.findIndex.call(radioElements, function (item) {
+    var indexCheck = radioElements.findIndex(function (item) {
       return item.checked;
     });
     var filterName = radioElements[indexCheck].value;
     clearClass();
-    switch (filterName) {
+    switchFilter(filterName, ratio);
+  };
+
+  var switchFilter = function (filter, ratio) {
+    switch (filter) {
       case Effect.CHROME: {
         setChrome(ratio);
         return;
@@ -142,16 +149,20 @@
     }
   };
 
-  var init = function (effect, radio, preview) {
+  var initFilter = function (effect, radios, preview) {
     effectElement = effect;
-    radioElements = radio;
+    radioElements = Array.from(radios);
     previewElement = preview;
     initialAllRadio();
   };
 
+  var clearFilter = function () {
+    originalRadio.checked = true;
+  };
 
   window.filter = {
     setFilter: setFilter,
-    init: init
+    initFilter: initFilter,
+    clearFilter: clearFilter
   };
 })();
