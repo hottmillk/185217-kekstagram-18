@@ -3,12 +3,13 @@
 (function () {
 
   var TYPE_FILE = ['gif', 'jpg', 'jpeg', 'png'];
+
   var fileInput = document.querySelector('#upload-file');
   var previewElement = document.querySelector('.img-upload__preview');
   var previewImage = previewElement.querySelector('img');
   var fileUploadChangeHandler;
 
-  var FileChooser = function (callback) {
+  var fileChooser = function (callback) {
     fileUploadChangeHandler = callback;
     fileInput.addEventListener('change', function () {
       var file = fileInput.files[0];
@@ -51,10 +52,10 @@
     fileInput.value = '';
   };
 
-  FileChooser.prototype.clear = function () {
+  fileChooser.prototype.clear = function () {
     clearInput();
     clearPreview();
   };
 
-  window.FileChooser = FileChooser;
+  window.FileChooser = fileChooser;
 })();
